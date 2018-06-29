@@ -416,16 +416,16 @@ ifdef HAVE_WIN32
 endif
 ifdef HAVE_DARWIN_OS
 	echo "set(CMAKE_SYSTEM_NAME Darwin)" >> $@
-	echo "set(CMAKE_C_FLAGS $(CFLAGS))" >> $@
-	echo "set(CMAKE_CXX_FLAGS $(CFLAGS))" >> $@
-	echo "set(CMAKE_LD_FLAGS $(LDFLAGS))" >> $@
+	echo "set(CMAKE_C_FLAGS \"$(CFLAGS)\")" >> $@
+	echo "set(CMAKE_CXX_FLAGS \"$(CFLAGS)\")" >> $@
+	echo "set(CMAKE_LD_FLAGS \"$(LDFLAGS)\")" >> $@
 	echo "set(CMAKE_AR ar CACHE FILEPATH "Archiver")" >> $@
 ifdef HAVE_TVOS
-	echo "set(CMAKE_OSX_SYSROOT $(TVOS_SDK))" >> $@
+	echo "set(CMAKE_OSX_SYSROOT \"$(TVOS_SDK)\")" >> $@
 else ifdef HAVE_IOS
-	echo "set(CMAKE_OSX_SYSROOT $(IOS_SDK))" >> $@
+	echo "set(CMAKE_OSX_SYSROOT \"$(IOS_SDK)\")" >> $@
 else
-	echo "set(CMAKE_OSX_SYSROOT $(MACOSX_SDK))" >> $@
+	echo "set(CMAKE_OSX_SYSROOT \"$(MACOSX_SDK)\")" >> $@
 endif
 endif
 ifdef HAVE_CROSS_COMPILE
