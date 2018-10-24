@@ -1,7 +1,7 @@
 # PNG
-PNG_VERSION := 1.6.16
-PNG_URL := $(SF)/libpng/libpng16/older-releases/$(PNG_VERSION)/libpng-$(PNG_VERSION).tar.xz
-
+PNG_VERSION := 1.6.35
+#PNG_URL := $(SF)/libpng/libpng16/older-releases/$(PNG_VERSION)/libpng-$(PNG_VERSION).tar.xz
+PNG_URL := https://nchc.dl.sourceforge.net/project/libpng/libpng16/$(PNG_VERSION)/libpng-$(PNG_VERSION).tar.xz
 
 $(TARBALLS)/libpng-$(PNG_VERSION).tar.xz:
 	$(call download,$(PNG_URL))
