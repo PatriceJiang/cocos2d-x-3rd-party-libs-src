@@ -304,14 +304,11 @@ function generate_android_standalone_toolchain()
 
     echo "$ANDROID_NDK/build/tools/make-standalone-toolchain.py" 
 
-    "$ANDROID_NDK/build/tools/make_standalone_toolchain.py" \
-      --unified-headers \
+    "$ANDROID_NDK/build/tools/make-standalone-toolchain.sh" \
       --arch="${arch}" \
       --stl=libc++ \
       --install-dir="${toolchain_path}" \
-      --api="${build_api}"
-
-      #--platform="${api_level}" \
+      --platform="${api_level}" 
 }
 
 # build all the libraries for different arches

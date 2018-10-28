@@ -105,7 +105,8 @@ LD := $(HOST)-ld
 STRIP := $(HOST)-strip
 RANLIB := $(HOST)-gcc-ranlib
 EXTRA_CFLAGS += --sysroot=$(ANDROID_TOOLCHAIN_PATH)/sysroot 
-CFLAGS += -D__ANDROID_API__=$(ANDROID_BULID_API)
+#CFLAGS += -D__ANDROID_API__=$(ANDROID_BULID_API)
+CFLAGS += -D__ANDROID_API__=21
 endif
 
 ifdef HAVE_TIZEN

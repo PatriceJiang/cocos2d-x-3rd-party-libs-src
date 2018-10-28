@@ -2,7 +2,7 @@
 OPENSSL_VERSION := 1.1.1
 OPENSSL_URL := https://www.openssl.org/source/openssl-$(OPENSSL_VERSION).tar.gz
 
-OPENSSL_EXTRA_CONFIG_1=no-shared no-unit-test
+OPENSSL_EXTRA_CONFIG_1=no-shared no-unit-test no-tests no-stdio 
 OPENSSL_EXTRA_CONFIG_2=
 
 ifdef HAVE_MACOSX
@@ -59,10 +59,12 @@ endif
 
 ifeq ($(MY_TARGET_ARCH),armeabi-v7a)
 OPENSSL_CONFIG_VARS=android-arm
+ANDROID_TOOLCHAIN:=$(ANDROID_TOOLCHAIN_ARM)
 endif
 
 ifeq ($(MY_TARGET_ARCH),armeabi)
 OPENSSL_CONFIG_VARS=android-armeabi
+ANDROID_TOOLCHAIN:=$(ANDROID_TOOLCHAIN_ARM)
 endif
 
 ifeq ($(MY_TARGET_ARCH),x86)
@@ -145,7 +147,7 @@ $(TARBALLS)/openssl-$(OPENSSL_VERSION).tar.gz:
 openssl: openssl-$(OPENSSL_VERSION).tar.gz .sum-openssl
 	$(UNPACK)
 ifdef HAVE_ANDROID
-	#$(APPLY) $(SRC)/openssl/android-clang.patch
+	$(APPLY) $(SRC)/openssl/android-gcc.patch
 endif
 ifdef HAVE_IOS
 	#$(APPLY) $(SRC)/openssl/ios-armv7-crash.patch
@@ -154,11 +156,13 @@ endif
 
 .openssl: openssl
 ifdef HAVE_ANDROID
-	export PATH=$(ANDROID_TOOLCHAIN):$(PATH)
 	echo "cc - $(CC)"
 	echo "cxx - $(CXX)"
 	echo "host - $(HOST)"
-	cd $< && export PATH && export HOST &&./Configure $(OPENSSL_CONFIG_VARS) --prefix=$(PREFIX) ${OPENSSL_ARCH} $(OPENSSL_EXTRA_CONFIG_1) $(OPENSSL_EXTRA_CONFIG_2)
+	echo "path - $(PATH)"
+	echo "androidndk - $(ANDROID_NDK)"
+	export PATH=$(ANDROID_TOOLCHAIN):$(PATH)
+	cd $< &&  ./Configure $(OPENSSL_CONFIG_VARS) --prefix=$(PREFIX) ${OPENSSL_ARCH} $(OPENSSL_EXTRA_CONFIG_1) $(OPENSSL_EXTRA_CONFIG_2) --release
 else
 	cd $< && $(HOSTVARS_PIC) ./Configure $(OPENSSL_CONFIG_VARS) --prefix=$(PREFIX) ${OPENSSL_ARCH} $(OPENSSL_EXTRA_CONFIG_1) $(OPENSSL_EXTRA_CONFIG_2)
 endif

@@ -36,7 +36,7 @@ export CC
 
 echo `which clang`
 
-./Configure $ARG_SSL_ARCH --prefix=$INSTALL_PREFIX no-shared no-unit-test no-tests no-stdio  -D__ANDROID_API__=22
+./Configure $ARG_SSL_ARCH --prefix=$INSTALL_PREFIX no-shared no-unit-test no-tests no-stdio  -D__ANDROID_API__=14
 
 #sed -i "" 's/CC=$(CROSS_COMPILE\)gcc/CC=clang/g' Makefile
 #sed -i "" 's/CXX=$(CROSS_COMPILE)g++/CXX=clang++/g' Makefile
