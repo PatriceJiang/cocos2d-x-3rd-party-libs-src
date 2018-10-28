@@ -40,6 +40,11 @@ OPENSSL_CONFIG_VARS=linux-generic32
 endif
 endif
 
+ANDROID_TOOLCHAIN_ARM64:=$(ANDROID_NDK)/toolchains/aarch64-linux-android-4.9/prebuilt/darwin-x86_64/bin
+ANDROID_TOOLCHAIN_ARM:=$(ANDROID_NDK)/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin
+ANDROID_TOOLCHAIN_X86:=$(ANDROID_NDK)/toolchains/x86-4.9/prebuilt/darwin-x86_64/bin
+ANDROID_TOOLCHAIN:=$(ANDROID_TOOLCHAIN_ARM)
+
 ifdef HAVE_ANDROID
 export ANDROID_SYSROOT=$(ANDROID_TOOLCHAIN_PATH)/sysroot
 export SYSROOT=$(ANDROID_SYSROOT)
@@ -49,10 +54,11 @@ export CROSS_SYSROOT=$(ANDROID_SYSROOT)
 
 ifeq ($(MY_TARGET_ARCH),arm64-v8a)
 OPENSSL_CONFIG_VARS=android64-aarch64
+ANDROID_TOOLCHAIN:=$(ANDROID_TOOLCHAIN_ARM64)
 endif
 
 ifeq ($(MY_TARGET_ARCH),armeabi-v7a)
-OPENSSL_CONFIG_VARS=android-armeabi
+OPENSSL_CONFIG_VARS=android-arm
 endif
 
 ifeq ($(MY_TARGET_ARCH),armeabi)
@@ -61,6 +67,7 @@ endif
 
 ifeq ($(MY_TARGET_ARCH),x86)
 OPENSSL_CONFIG_VARS=android-x86
+ANDROID_TOOLCHAIN:=$(ANDROID_TOOLCHAIN_X86)
 endif
 endif
 
@@ -146,7 +153,16 @@ endif
 	$(MOVE)
 
 .openssl: openssl
+ifdef HAVE_ANDROID
+	export PATH=$(ANDROID_TOOLCHAIN):$(PATH)
+	echo "cc - $(CC)"
+	echo "cxx - $(CXX)"
+	echo "host - $(HOST)"
+	cd $< && export PATH && export HOST &&./Configure $(OPENSSL_CONFIG_VARS) --prefix=$(PREFIX) ${OPENSSL_ARCH} $(OPENSSL_EXTRA_CONFIG_1) $(OPENSSL_EXTRA_CONFIG_2)
+else
 	cd $< && $(HOSTVARS_PIC) ./Configure $(OPENSSL_CONFIG_VARS) --prefix=$(PREFIX) ${OPENSSL_ARCH} $(OPENSSL_EXTRA_CONFIG_1) $(OPENSSL_EXTRA_CONFIG_2)
+endif
+
 ifdef HAVE_IOS
 	cd $< && perl -i -pe "s|^CFLAGS=(.*) -DNDEBUG (.*)-O3|CFLAGS=\\1 \\2 ${OPTIM} ${ENABLE_BITCODE}|g" Makefile
 	cd $< && perl -i -pe "s|^CFLAGS_Q=(.*) -DNDEBUG (.*)|CFLAGS_Q=\\1 \\2 ${OPTIM} ${ENABLE_BITCODE}|g" Makefile

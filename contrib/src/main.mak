@@ -91,14 +91,21 @@ endif
 endif
 
 ifdef HAVE_ANDROID
-CC :=  clang
-CXX := clang++
+#CC :=  clang
+#CXX := clang++
+#AS := clang
+
+PATH := $(ANDROID_TOOLCHAIN_PATH)/bin:$(PATH)
+
+CC := $(HOST)-gcc
+CXX := $(HOST)-g++
+AS := $(HOST)-as
 AR := $(HOST)-ar
-AS := clang
 LD := $(HOST)-ld
 STRIP := $(HOST)-strip
 RANLIB := $(HOST)-gcc-ranlib
-EXTRA_CFLAGS += --sysroot=$(ANDROID_TOOLCHAIN_PATH)/sysroot
+EXTRA_CFLAGS += --sysroot=$(ANDROID_TOOLCHAIN_PATH)/sysroot 
+CFLAGS += -D__ANDROID_API__=$(ANDROID_BULID_API)
 endif
 
 ifdef HAVE_TIZEN

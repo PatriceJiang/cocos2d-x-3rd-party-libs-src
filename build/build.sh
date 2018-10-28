@@ -302,11 +302,16 @@ function generate_android_standalone_toolchain()
         return
     fi
 
-    "$ANDROID_NDK/build/tools/make-standalone-toolchain.sh" \
+    echo "$ANDROID_NDK/build/tools/make-standalone-toolchain.py" 
+
+    "$ANDROID_NDK/build/tools/make_standalone_toolchain.py" \
+      --unified-headers \
       --arch="${arch}" \
-      --platform="${api_level}" \
       --stl=libc++ \
-      --install-dir="${toolchain_path}"
+      --install-dir="${toolchain_path}" \
+      --api="${build_api}"
+
+      #--platform="${api_level}" \
 }
 
 # build all the libraries for different arches
@@ -374,6 +379,8 @@ do
             export BUILDFORTVOS="yes"
         fi
 
+        export ANDROID_BULID_API=$build_api
+
         if [ $cfg_platform_name = "android" ];then
             if [ $MY_TARGET_ARCH = "arm64-v8a" ];then
                 export ANDROID_API=android-$cfg_default_arm64_build_api
@@ -383,7 +390,6 @@ do
 
             generate_android_standalone_toolchain $MY_TARGET_ARCH $ANDROID_API
             export ANDROID_TOOLCHAIN_PATH="${toolchain_path}"
-            export PATH="${toolchain_path}/bin:${PATH}"
         fi
         echo "build api is $ANDROID_API."
 

@@ -11,6 +11,8 @@ $(TARBALLS)/libpng-$(PNG_VERSION).tar.xz:
 
 png: libpng-$(PNG_VERSION).tar.xz .sum-png
 	$(UNPACK)
+	echo "-----------------appling patch"
+	$(APPLY) $(SRC)/png/bins.patch
 	$(MOVE)
 
 DEPS_png = zlib $(DEPS_zlib)
@@ -19,5 +21,5 @@ DEPS_png = zlib $(DEPS_zlib)
 	cd $< && $(HOSTVARS) ./configure $(HOSTCONF)
 	cd $< && rm -f aclocal.m4
 	cd $< && aclocal && autoconf
-	cd $< && $(MAKE) install
+	cd $< && $(HOSTVARS) $(MAKE) install
 	touch $@
