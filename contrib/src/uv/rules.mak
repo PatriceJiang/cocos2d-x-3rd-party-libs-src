@@ -1,4 +1,5 @@
 # libuv
+# libuv_version = 1.23.1
 
 LIBUV_GITURL := https://github.com/libuv/libuv
 

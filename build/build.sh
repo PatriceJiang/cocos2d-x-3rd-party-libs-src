@@ -321,7 +321,7 @@ do
     fi
 
 
-    mkdir -p $cfg_platform_name/$archive_name/include/
+    #mkdir -p $cfg_platform_name/$archive_name/include/
 
     for arch in "${build_arches[@]}"
     do
@@ -420,7 +420,9 @@ do
 
         cd -
 
-        local_library_install_path=$cfg_platform_name/$archive_name/prebuilt/$original_arch_name
+        #local_library_install_path=$cfg_platform_name/$archive_name/prebuilt/$original_arch_name
+        local_library_install_path=$cfg_platform_name/$original_arch_name
+
         if [ ! -d $local_library_install_path ]; then
             echo "create folder for library with specify arch. $local_library_install_path"
             mkdir -p $local_library_install_path
@@ -471,7 +473,9 @@ do
                     dep_archive_name=$dep_archive
                 fi
 
-                local_library_install_path=$cfg_platform_name/${dep_archive}/prebuilt/$original_arch_name
+                #local_library_install_path=$cfg_platform_name/${dep_archive}/prebuilt/$original_arch_name
+                local_library_install_path=$cfg_platform_name/$original_arch_name
+
                 mkdir -p $local_library_install_path
                 cp $top_dir/contrib/$install_library_path/$arch/lib/lib${dep_archive_name}.a $local_library_install_path/lib${dep_archive_name}.a
 
@@ -482,9 +486,11 @@ do
         echo "Copying needed header files"
         copy_include_file_path=${lib}_header_files
         copy_header_list=${!copy_include_file_path//,/ }
+        local_library_install_path=$cfg_platform_name/$original_arch_name/include/${lib}
+        mkdir -p $local_library_install_path
         for copy_header_pattern in ${copy_header_list[@]}
         do
-            cp  -rv $top_dir/contrib/$install_library_path/$arch/include/${copy_header_pattern} $cfg_platform_name/$archive_name/include
+            cp  -rv $top_dir/contrib/$install_library_path/$arch/include/${copy_header_pattern} $local_library_install_path
         done
 
         echo "cleaning up"

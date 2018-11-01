@@ -1,9 +1,11 @@
 # OPENSSL
-OPENSSL_VERSION := 1.1.0c
+OPENSSL_VERSION := 1.1.1
 OPENSSL_URL := https://www.openssl.org/source/openssl-$(OPENSSL_VERSION).tar.gz
 
-OPENSSL_EXTRA_CONFIG_1=no-shared no-unit-test
+OPENSSL_EXTRA_CONFIG_1=no-shared no-unit-test no-tests
 OPENSSL_EXTRA_CONFIG_2=
+
+EXTRA_CFLAGS+=-fno-integrated-as
 
 ifdef HAVE_MACOSX
 ifeq ($(MY_TARGET_ARCH),x86_64)
@@ -146,24 +148,6 @@ endif
 	$(MOVE)
 
 .openssl: openssl
-	cd $< && $(HOSTVARS_PIC) ./Configure $(OPENSSL_CONFIG_VARS) --prefix=$(PREFIX) ${OPENSSL_ARCH} $(OPENSSL_EXTRA_CONFIG_1) $(OPENSSL_EXTRA_CONFIG_2)
-ifdef HAVE_IOS
-	cd $< && perl -i -pe "s|^CFLAGS=(.*) -DNDEBUG (.*)-O3|CFLAGS=\\1 \\2 ${OPTIM} ${ENABLE_BITCODE}|g" Makefile
-	cd $< && perl -i -pe "s|^CFLAGS_Q=(.*) -DNDEBUG (.*)|CFLAGS_Q=\\1 \\2 ${OPTIM} ${ENABLE_BITCODE}|g" Makefile
-endif
-ifdef HAVE_TVOS
-	cd $< && perl -i -pe "s|^CFLAGS=(.*) -DNDEBUG (.*)-O3|CFLAGS=\\1 \\2 ${OPTIM} ${ENABLE_BITCODE}|g" Makefile
-	cd $< && perl -i -pe "s|^CFLAGS_Q=(.*) -DNDEBUG (.*)|CFLAGS_Q=\\1 \\2 ${OPTIM} ${ENABLE_BITCODE}|g" Makefile
-endif
-ifdef HAVE_LINUX
-ifndef HAVE_ANDROID
-	cd $< && perl -i -pe "s|^CFLAGS=(.*) -DNDEBUG (.*)-O3|CFLAGS=\\1 \\2 ${EXTRA_CFLAGS} ${OPTIM}|g" Makefile
-	cd $< && perl -i -pe "s|^CFLAGS_Q=(.*) -DNDEBUG (.*)|CFLAGS_Q=\\1 \\2 ${EXTRA_CFLAGS} ${OPTIM}|g" Makefile
-endif
-endif
-ifdef HAVE_MACOSX
-	cd $< && perl -i -pe "s|^CFLAGS=(.*) -DNDEBUG (.*)-O3|CFLAGS=\\1 \\2 ${OPTIM}|g" Makefile
-	cd $< && perl -i -pe "s|^CFLAGS_Q=(.*) -DNDEBUG (.*)|CFLAGS_Q=\\1 \\2 ${OPTIM}|g" Makefile
-endif
+	cd $< && $(HOSTVARS_PIC) CFLAGS="$(CFLAGS) $(EXTRA_CFLAGS)" ./Configure $(OPENSSL_CONFIG_VARS) --prefix=$(PREFIX) ${OPENSSL_ARCH} $(OPENSSL_EXTRA_CONFIG_1) $(OPENSSL_EXTRA_CONFIG_2)
 	cd $< && $(MAKE) install_sw
 	touch $@

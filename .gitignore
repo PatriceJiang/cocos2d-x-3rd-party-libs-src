@@ -19,6 +19,9 @@
 *.exe
 *.out
 *.app
+
+# folders
+/.vscode
 /contrib/tarballs/Chipmunk-6.2.1/
 /contrib/tarballs/Chipmunk-6.2.2/
 /contrib/tarballs/LuaJIT-2.0.3/
@@ -54,3 +57,8 @@
 **/winrt/install
 **/winrt/temp
 **/winrt/cmake/install
+/build/android-tool*
+/contrib/android-*
+/contrib/tarballs
+
+**/.DS_Store
