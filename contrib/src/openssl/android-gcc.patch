@@ -1,5 +1,5 @@
 diff --git a/Configurations/15-android.conf b/Configurations/15-android.conf
-index d3b428b..d197773 100644
+index d3b428b..8ec3907 100644
 --- a/Configurations/15-android.conf
 +++ b/Configurations/15-android.conf
 @@ -14,6 +14,10 @@
@@ -22,27 +22,25 @@ index d3b428b..d197773 100644
              die "\$ANDROID_NDK is not defined"  if (!$ndk);
              die "\$ANDROID_NDK=$ndk is invalid" if (!-d "$ndk/platforms");
              $ndk = canonpath($ndk);
-@@ -64,8 +70,19 @@
+@@ -64,8 +70,17 @@
              }
              die "no sysroot=$sysroot"   if (!-d $sysroot);
  
-+            print "#########SSYROOT##########################\n";
-+            print "$sysroot"."\n";
-+            print "#########SSYROOT##########################\n";
++            print "#########SSYROOT-1##########################\n";
 +            print "$sysroot"."\n";
 +
              $sysroot =~ m|/android-([0-9]+)/arch-(\w+)/?$|;
              my ($api, $arch) = ($1, $2);
-+            #my $api = 14;
++            my $api = 21;
 +            #my $arch = "arm";
-+            print "#########SSYROOT##########################\n";
++            print "#########SSYROOT-2##########################\n";
 +            print "$sysroot"."\n";
-+            print "#########SSYROOT##########################\n";
++            print "#########API/PATH##########################\n";
 +            print "$api"."/"."$arch"."\n";
  
              my $triarch = $triplet{$arch};
              my $cflags;
-@@ -86,8 +103,11 @@
+@@ -86,10 +101,14 @@
              } elsif ($user{CC} eq "clang") {
                  die "no NDK clang on \$PATH";
              } else {
@@ -53,9 +51,13 @@ index d3b428b..d197773 100644
 -                    die "no NDK $triarch-gcc on \$PATH";
 +                    #die "no NDK $triarch-gcc on \$PATH";
                  }
-                 $cflags .= " -mandroid";
+-                $cflags .= " -mandroid";
++                $cflags .= " -mandroid".
++                    " -D__ANDROID_API__=$api";
                  $user{CROSS_COMPILE} = "$triarch-";
-@@ -103,9 +123,14 @@
+             }
+ 
+@@ -103,9 +122,14 @@
                  $cppflags .= " -isystem \$(ANDROID_NDK)/$incroot";
              }
  

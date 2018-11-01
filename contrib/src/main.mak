@@ -97,6 +97,10 @@ ifdef HAVE_ANDROID
 
 PATH := $(ANDROID_TOOLCHAIN_PATH)/bin:$(PATH)
 
+#CC := $(HOST)-clang
+#CXX := $(HOST)-clang++
+#AS := $(HOST)-clang
+
 CC := $(HOST)-gcc
 CXX := $(HOST)-g++
 AS := $(HOST)-as

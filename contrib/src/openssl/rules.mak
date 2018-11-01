@@ -1,8 +1,9 @@
 # OPENSSL
 OPENSSL_VERSION := 1.1.1
-OPENSSL_URL := https://www.openssl.org/source/openssl-$(OPENSSL_VERSION).tar.gz
+#OPENSSL_URL := https://www.openssl.org/source/openssl-$(OPENSSL_VERSION).tar.gz
+OPENSSL_URL  := https://github.com/openssl/openssl/archive/OpenSSL_1_1_1.tar.gz
 
-OPENSSL_EXTRA_CONFIG_1=no-shared no-unit-test no-tests no-stdio 
+OPENSSL_EXTRA_CONFIG_1=no-shared no-unit-test no-tests
 OPENSSL_EXTRA_CONFIG_2=
 
 ifdef HAVE_MACOSX
