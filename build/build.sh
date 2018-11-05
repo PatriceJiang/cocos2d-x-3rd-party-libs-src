@@ -285,7 +285,7 @@ fi
 function generate_android_standalone_toolchain()
 {
     arch=$1
-    if [ $arch == "armeabi" ] || [ $arch == "armeabi-v7a" ]; then
+    if [ $arch == "armeabi-v7a" ]; then
         arch="arm"
     fi
 
