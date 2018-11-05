@@ -91,6 +91,8 @@ endif
 endif
 
 ifdef HAVE_ANDROID
+
+ifeq (${USE_CLANG}, yes)
 CC :=  clang
 CXX := clang++
 AR := $(HOST)-ar
@@ -99,7 +101,31 @@ LD := $(HOST)-ld
 STRIP := $(HOST)-strip
 RANLIB := $(HOST)-gcc-ranlib
 EXTRA_CFLAGS += --sysroot=$(ANDROID_TOOLCHAIN_PATH)/sysroot
-endif
+else #USE_CLANG
+
+ifeq (${GCC_TOOLCHAIN_USE_PREFX}, yes)
+
+CC := $(HOST)-gcc
+CXX := $(HOST)-g++
+AR := $(HOST)-ar
+AS := $(HOST)-as
+LD := $(HOST)-ld
+STRIP := $(HOST)-strip
+RANLIB := $(HOST)-gcc-ranlib
+else  #GCC_TOOLCHAIN_NO_PREFX
+CC := gcc
+CXX := g++
+AR := ar
+AS := as
+LD := ld
+STRIP := strip
+RANLIB := ranlib
+endif #GCC_TOOLCHAIN_NO_PREFX
+
+EXTRA_CFLAGS += --sysroot=$(ANDROID_TOOLCHAIN_PATH)/sysroot -D__ANDROID_API__=${ANDROID_API_NUM}
+endif #USE_CLANG
+
+endif #HAVE_ANDROID
 
 ifdef HAVE_TIZEN
 ifeq ($(ARCH),arm)
@@ -326,9 +352,9 @@ checksum = \
 		"$(SRC)/$(patsubst .sum-%,%,$@)/$(2)SUMS"
 CHECK_SHA512 = $(call checksum,$(SHA512SUM),SHA512)
 UNPACK = $(RM) -R $@ \
-	$(foreach f,$(filter %.tar.gz %.tgz,$^), && tar xvzf $(f)) \
-	$(foreach f,$(filter %.tar.bz2,$^), && tar xvjf $(f)) \
-	$(foreach f,$(filter %.tar.xz,$^), && tar xvJf $(f)) \
+	$(foreach f,$(filter %.tar.gz %.tgz,$^), && tar xzf $(f)) \
+	$(foreach f,$(filter %.tar.bz2,$^), && tar xjf $(f)) \
+	$(foreach f,$(filter %.tar.xz,$^), && tar xJf $(f)) \
 	$(foreach f,$(filter %.zip,$^), && unzip $(f))
 UNPACK_DIR = $(patsubst %.tar,%,$(basename $(notdir $<)))
 APPLY = (cd $(UNPACK_DIR) && patch -fp1) <
@@ -436,8 +462,11 @@ ifdef HAVE_ANDROID
 	echo "set(CMAKE_SYSTEM_NAME Linux)" >> $@
 	echo "set(CMAKE_CXX_SYSROOT_FLAG $(ANDROID_TOOLCHAIN_PATH)/sysroot)" >> $@
 	echo "set(CMAKE_C_SYSROOT_FLAG $(ANDROID_TOOLCHAIN_PATH)/sysroot)" >> $@
+ifeq ($(USE_CLANG), "yes")
 	echo "include_directories($(ANDROID_TOOLCHAIN_PATH)/include/c++/4.9.x \
 	 	$(ANDROID_TOOLCHAIN_PATH)/include/llvm-libc++abi/include)"  >> $@
+endif
+
 endif  #end of HAVE_ANDROID
 
 ifdef HAVE_TIZEN

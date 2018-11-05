@@ -5,7 +5,7 @@ OPENSSL_URL := https://www.openssl.org/source/openssl-$(OPENSSL_VERSION).tar.gz
 OPENSSL_EXTRA_CONFIG_1=no-shared no-unit-test no-tests
 OPENSSL_EXTRA_CONFIG_2=
 
-EXTRA_CFLAGS+=-fno-integrated-as
+#EXTRA_CFLAGS+=-fno-integrated-as
 
 ifdef HAVE_MACOSX
 ifeq ($(MY_TARGET_ARCH),x86_64)
@@ -54,16 +54,21 @@ OPENSSL_CONFIG_VARS=android64-aarch64
 endif
 
 ifeq ($(MY_TARGET_ARCH),armeabi-v7a)
-OPENSSL_CONFIG_VARS=android-armeabi
+OPENSSL_CONFIG_VARS=android-arm
 endif
 
 ifeq ($(MY_TARGET_ARCH),armeabi)
 OPENSSL_CONFIG_VARS=android-armeabi
 endif
 
+ifeq ($(MY_TARGET_ARCH),armv7)
+OPENSSL_CONFIG_VARS=android-arm
+endif
+
 ifeq ($(MY_TARGET_ARCH),x86)
 OPENSSL_CONFIG_VARS=android-x86
 endif
+
 endif
 
 ifdef HAVE_IOS

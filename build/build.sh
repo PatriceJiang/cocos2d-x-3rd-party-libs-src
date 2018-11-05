@@ -282,30 +282,46 @@ if [ $cfg_platform_name = "mac" ];then
     export MIN_MACOSX_TARGET=$cfg_min_macosx_deoply_tartget
 fi
 
+if [ $cfg_default_use_clang = "yes" ]; then
+    export USE_CLANG="yes"
+else
+    export USE_CLANG="no"
+fi
+
+if [ $cfg_default_use_gcc_prefix = "yes" ]; then
+    export GCC_TOOLCHAIN_USE_PREFX="yes"
+else
+    export GCC_TOOLCHAIN_USE_PREFX="yes"
+fi
+
 function generate_android_standalone_toolchain()
 {
     arch=$1
-    if [ $arch == "armeabi-v7a" ]; then
-        arch="arm"
+    if [ $arch == "armeabi" ] || [ $arch == "armeabi-v7a" ]; then
+        arch_arg="arm"
     fi
 
     if [ $arch == "arm64-v8a" ]; then
-        arch="arm64" 
+        arch_arg="arm64" 
     fi
 
     api_level=$2
-    toolchain_path="${current_dir}/android-toolchain-${arch}"
+    toolchain_path="${current_dir}/android-toolchain-${arch_arg}"
 
-    echo "generating android standalone toolchain for ${arch}"
+    echo "generating android standalone toolchain for ${arch_arg}"
 
     if [ -e ${toolchain_path} ]; then
         return
     fi
+    arg_use_lib="libc++"
+    if [ ${cfg_default_use_clang} = yes ]; then
+        arg_use_lib="gnustl"
+    fi
 
     "$ANDROID_NDK/build/tools/make-standalone-toolchain.sh" \
-      --arch="${arch}" \
+      --arch="${arch_arg}" \
       --platform="${api_level}" \
-      --stl=libc++ \
+      --stl=${arg_use_lib} \
       --install-dir="${toolchain_path}"
 }
 
@@ -320,6 +336,10 @@ do
         archive_name=$lib
     fi
 
+    use_gcc_prefix=cfg_${lib}_use_gcc_prefix
+    if [[ ! -z ${!use_gcc_prefix}  && ${!use_gcc_prefix} = "no" ]]; then
+        export GCC_TOOLCHAIN_USE_PREFX="no"
+    fi
 
     #mkdir -p $cfg_platform_name/$archive_name/include/
 
@@ -379,6 +399,7 @@ do
                 export ANDROID_API=android-$cfg_default_arm64_build_api
             else
                 export ANDROID_API=android-$build_api
+                export ANDROID_API_NUM=$build_api
             fi
 
             generate_android_standalone_toolchain $MY_TARGET_ARCH $ANDROID_API
@@ -386,6 +407,7 @@ do
             export PATH="${toolchain_path}/bin:${PATH}"
         fi
         echo "build api is $ANDROID_API."
+        echo "arch name is $original_arch_name."
 
         if [ $cfg_platform_name = "tizen" ];then
             export TIZEN_SDK_VERSION=$cfg_default_tizen_sdk_version
@@ -404,6 +426,7 @@ do
 
         export BUILD_LIB=$lib
 
+        echo "enable-$lib build=$cfg_build_machine host=${!my_target_host} prefix=${PREFIX} target_host=${my_target_host}"
         ../bootstrap --enable-$lib \
                      --build=$cfg_build_machine \
                      --host=${!my_target_host} \

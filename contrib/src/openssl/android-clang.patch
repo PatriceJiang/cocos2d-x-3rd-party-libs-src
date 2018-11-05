@@ -1,5 +1,5 @@
 diff --git a/Configurations/15-android.conf b/Configurations/15-android.conf
-index d3b428b..1514cbc 100644
+index d3b428b..bbc3e01 100644
 --- a/Configurations/15-android.conf
 +++ b/Configurations/15-android.conf
 @@ -14,6 +14,11 @@
@@ -14,12 +14,12 @@ index d3b428b..1514cbc 100644
      );
  
      sub android_ndk {
-@@ -23,10 +28,13 @@
+@@ -23,12 +28,17 @@
              }
  
              my $ndk = $ENV{ANDROID_NDK};
 +            print "#############NDK######################\n";
-+            print "$ndk"."\n";
++            print "ndk: $ndk"."\n";
              die "\$ANDROID_NDK is not defined"  if (!$ndk);
              die "\$ANDROID_NDK=$ndk is invalid" if (!-d "$ndk/platforms");
              $ndk = canonpath($ndk);
@@ -27,12 +27,25 @@ index d3b428b..1514cbc 100644
 +            my $ANDROID_NDK = $ndk;
              my $ndkver = undef;
  
++            print "nkdver: $ndkver \n";
++
              if (open my $fh, "<$ndk/source.properties") {
-@@ -66,30 +74,37 @@
+                 local $_;
+                 while(<$fh>) {
+@@ -40,6 +50,8 @@
+                 close $fh;
+             }
+ 
++            print "new_ndk_ver: $ndkver \n";
++
+             my $sysroot;
+ 
+             if (!($sysroot = $ENV{CROSS_SYSROOT})) {
+@@ -66,30 +78,42 @@
  
              $sysroot =~ m|/android-([0-9]+)/arch-(\w+)/?$|;
              my ($api, $arch) = ($1, $2);
-+            my $api = 21;
++            my $api = $ENV{"ANDROID_API_NUM"};
 +            #my $arch = "arm";
  
              my $triarch = $triplet{$arch};
@@ -41,8 +54,9 @@ index d3b428b..1514cbc 100644
  
              # see if there is NDK clang on $PATH
 -            if (which("clang") =~ m|^$ndk/.*/prebuilt/([^/]+)/|) {
-+            if (which("clang") =~ m|^$ndk/.*/prebuilt/([^/]+)/|
-+                or which("clang") =~ m|.*android-toolchain.*|
++            if ( $ENV{"USE_CLANG"} eq "yes" and  
++                (which("clang") =~ m|^$ndk/.*/prebuilt/([^/]+)/|
++                or which("clang") =~ m|.*android-toolchain.*| )
 +            ) {
                  my $host=$1;
                  # harmonize with gcc default
@@ -55,13 +69,18 @@ index d3b428b..1514cbc 100644
 +               #         .  "-gcc-toolchain \$(ANDROID_NDK)/toolchains"
 +                #        .  "/$tritools-4.9/prebuilt/$host"
 +                ;
++                print "clang/arm:".$arm."/tridefault:".$tridefault."tritools:".$tritools."\n";
                  $user{CC} = "clang" if ($user{CC} !~ m|clang|);
                  $user{CROSS_COMPILE} = undef;
              } elsif ($user{CC} eq "clang") {
                  die "no NDK clang on \$PATH";
              } else {
-+
-                 if (which("$triarch-gcc") !~ m|^$ndk/.*/prebuilt/([^/]+)/|) {
+-                if (which("$triarch-gcc") !~ m|^$ndk/.*/prebuilt/([^/]+)/|) {
++                print "which $triarch-gcc :".which("$triarch-gcc")."\n";
++                if (which("$triarch-gcc") !~ m|^$ndk/.*/prebuilt/([^/]+)/| 
++                    and 
++                    which("$triarch-gcc") !~ m|.*android-toolchain.*| 
++                ) {
                      die "no NDK $triarch-gcc on \$PATH";
                  }
 -                $cflags .= " -mandroid";
@@ -70,7 +89,7 @@ index d3b428b..1514cbc 100644
                  $user{CROSS_COMPILE} = "$triarch-";
              }
  
-@@ -105,7 +120,7 @@
+@@ -105,7 +129,7 @@
  
              $sysroot =~ s|^$ndk/||;
              $android_ndk = {
