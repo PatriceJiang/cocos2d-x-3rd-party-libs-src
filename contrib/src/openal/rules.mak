@@ -3,7 +3,7 @@
 OPENAL_GITURL := https://github.com/PatriceJiang/openal-soft-android
 
 $(TARBALLS)/openal-soft-android-master.tar.xz:
-	$(call download_git,$(OPENAL_GITURL),master,60e7d26)
+	$(call download_git,$(OPENAL_GITURL),master,develop)
 
 .sum-openal: openal-soft-android-master.tar.xz
 	$(warning $@ not implemented)
