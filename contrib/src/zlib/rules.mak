@@ -1,6 +1,7 @@
 # ZLIB
-ZLIB_VERSION := 1.2.8
-ZLIB_URL := $(SF)/libpng/zlib-$(ZLIB_VERSION).tar.gz
+ZLIB_VERSION := 1.2.11
+#ZLIB_URL := $(SF)/libpng/zlib-$(ZLIB_VERSION).tar.gz
+ZLIB_URL:=https://nchc.dl.sourceforge.net/project/libpng/zlib/1.2.11/zlib-1.2.11.tar.gz
 
 
 ifeq ($(shell uname),Darwin) # zlib tries to use libtool on Darwin
@@ -24,9 +25,9 @@ endif
 $(TARBALLS)/zlib-$(ZLIB_VERSION).tar.gz:
 	$(call download,$(ZLIB_URL))
 
-.sum-zlib: zlib-$(ZLIB_VERSION).tar.gz
+#.sum-zlib: zlib-$(ZLIB_VERSION).tar.gz
 
-zlib: zlib-$(ZLIB_VERSION).tar.gz .sum-zlib
+zlib: zlib-$(ZLIB_VERSION).tar.gz
 	$(UNPACK)
 	$(MOVE)
 

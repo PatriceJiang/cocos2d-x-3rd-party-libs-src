@@ -1,15 +1,15 @@
 # freetype
 
-FREETYPE2_VERSION := 2.10.2
-FREETYPE2_URL := $(SF)/freetype/freetype2/$(FREETYPE2_VERSION)/freetype-$(FREETYPE2_VERSION).tar.gz
+FREETYPE2_VERSION := 2.10.0
+#FREETYPE2_URL := $(SF)/freetype/freetype2/$(FREETYPE2_VERSION)/freetype-$(FREETYPE2_VERSION).tar.gz
 FREETYPE2_URL := https://bigsearcher.com/mirrors/nongnu/freetype/freetype-2.10.0.tar.bz2
 
 $(TARBALLS)/freetype-$(FREETYPE2_VERSION).tar.gz:
 	$(call download,$(FREETYPE2_URL))
 
-.sum-freetype: freetype-$(FREETYPE2_VERSION).tar.gz
+#.sum-freetype: freetype-$(FREETYPE2_VERSION).tar.gz
 
-freetype: freetype-$(FREETYPE2_VERSION).tar.gz .sum-freetype
+freetype: freetype-$(FREETYPE2_VERSION).tar.gz
 	$(UNPACK)
 	$(call pkg_static, "builds/unix/freetype2.in")
 	$(MOVE)
