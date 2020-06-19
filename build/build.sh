@@ -306,7 +306,8 @@ function generate_android_standalone_toolchain()
       --arch="${arch}" \
       --platform="${api_level}" \
       --stl=libc++ \
-      --install-dir="${toolchain_path}"
+      --install-dir="${toolchain_path}" \
+      --verbose
 }
 
 # build all the libraries for different arches
