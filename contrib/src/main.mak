@@ -30,6 +30,7 @@ GITHUB := https://github.com
 # Machine-dependent variables
 #
 
+$(info "?? host $(HOST) - $(BUILD)")
 PREFIX ?= $(TOPDST)/$(HOST)
 PREFIX := $(abspath $(PREFIX))
 ifneq ($(HOST),$(BUILD))
@@ -97,8 +98,23 @@ AR := $(HOST)-ar
 AS := clang
 LD := $(HOST)-ld
 STRIP := $(HOST)-strip
-RANLIB := $(HOST)-gcc-ranlib
+RANLIB := $(HOST)-ranlib
 EXTRA_CFLAGS += --sysroot=$(ANDROID_TOOLCHAIN_PATH)/sysroot
+
+# ifeq ($(ARCH),armeabi-v7a)
+# EXTRA_CFLAGS += -target arm-none-linux-androideabi
+# endif
+
+# ifeq ($(ARCH),arm64-v8a)
+# EXTRA_CFLAGS += -target aarch-none-linux-androideabi
+# endif
+
+# ifeq ($(ARCH),x86)
+# EXTRA_CFLAGS += -target i386-none-linux-androideabi
+# endif
+
+$(info  "---------------flags $(ARCH): $(EXTRA_CFLAGS)")
+
 endif
 
 ifdef HAVE_TIZEN

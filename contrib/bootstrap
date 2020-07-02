@@ -38,6 +38,8 @@ PREFIX=
 PKGS_ENABLE=
 PKGS_DISABLE=
 
+echo "--------run bootstrap-----"
+
 if test ! -f "../../contrib/src/main.mak"
 then
 	echo "$0 must be run from a subdirectory"
@@ -117,6 +119,7 @@ add_make()
 {
 	while test -n "$1"
 	do
+        echo "------ add cmake $1"
 		echo "$1" >&3
 		shift
 	done
@@ -345,7 +348,7 @@ test -z "$PREFIX" || add_make "PREFIX := $PREFIX"
 # Checks
 #
 OS="${HOST#*-}" # strip architecture
-echo "The host is $OS"
+echo "The host is ?????? $OS"
 case "${OS}" in
 	apple-darwin*)
 		if test -n "$BUILDFORIOS"
@@ -364,7 +367,7 @@ case "${OS}" in
 	*bsd*)
 		add_make_enabled "HAVE_BSD"
 		;;
-	*android*)
+	*linux*)
                 echo "check android sdk"
 		check_android_sdk
 		add_make_enabled "HAVE_LINUX" "HAVE_ANDROID"
@@ -391,7 +394,7 @@ case "${OS}" in
             check_tizen_sdk
             add_make_enabled "HAVE_TIZEN" "HAVE_LINUX"
             ;;
-	*linux*)
+	*android*)
 		add_make_enabled "HAVE_LINUX"
 		;;
 	*mingw*)

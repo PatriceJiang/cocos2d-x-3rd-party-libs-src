@@ -403,6 +403,8 @@ do
             cfg_build_machine=${!my_target_host}
         fi
 
+        echo "------ set host to ${my_target_host} "
+
         export BUILD_LIB=$lib
 
         ../bootstrap --enable-$lib \
